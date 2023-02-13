@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  redis:
+    image: redis:7.0.0
+    hostname: redis-7-0-0
+    container_name: redis-7-0-0
+    ports:
+    - "6379:6379"
+    volumes:
+    - ../../storage/:/data
+    labels:
+      SERVICE_NAME: "redis-7-0-0"
+      # SERVICE_CHECK_HTTP: /check-status
+      # SERVICE_CHECK_INTERVAL: 5s
+      SERVICE_TAGS: "redis-7-0-0"
+    networks:
+    - service-network   
+networks:
+  service-network:
+    name: developer_service-net
+    driver: bridge

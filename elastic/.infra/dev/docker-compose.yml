@@ -1,0 +1,38 @@
+version: '2.1'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.4
+    hostname: elasticsearch-7-17-4
+    volumes:
+      - ../../storage/:/usr/share/elasticsearch/data    
+    environment:
+      - cluster.name=docker-cluster
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "path.data=/usr/share/elasticsearch/data/"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 2g
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '2m'
+        max-file: '5'
+    ports:
+      - "127.0.0.1:9200:9200"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -vq '\"status\":\"red\"'" ]
+      retries: 10
+      interval: 20s
+    networks:
+    - service-network       
+networks:
+  service-network:
+    name: developer_service-net
+    driver: bridge      
